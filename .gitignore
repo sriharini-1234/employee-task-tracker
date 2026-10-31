@@ -1,0 +1,18 @@
+@"
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.venv312/
+venv/
+.env
+.pytest_cache/
+
+# React / Node
+node_modules/
+dist/
+
+# Environment files
+.env.*
+!.env.example
+"@ | Set-Content .gitignore
