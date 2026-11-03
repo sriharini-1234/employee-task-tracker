@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-from database import get_db
+from database import Base, engine, get_db
 from models import Employee, Task
 from routers import employees, tasks
 
@@ -12,6 +12,8 @@ app = FastAPI(
     description="REST API for employee and task management.",
     version="1.0.0",
 )
+
+Base.metadata.create_all(bind=engine)
 
 origins = os.getenv("FRONTEND_ORIGIN", "http://localhost:5173").split(",")
 app.add_middleware(
