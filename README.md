@@ -443,7 +443,45 @@ http://localhost:5173
 
 ---
 
-## 7. API Endpoints
+## 7. Deploying the frontend to Vercel
+
+The frontend and FastAPI backend must both be deployed and reachable over HTTPS.
+Deploying the Vite frontend to Vercel does **not** deploy the backend or database;
+host those separately on a platform that supports FastAPI and PostgreSQL.
+
+1. Import the repository in Vercel and set the project **Root Directory** to
+   `frontend`. Use `npm run build` as the build command and `dist` as the output
+   directory.
+2. In the Vercel project settings, add the environment variable
+   `VITE_API_URL` for each environment you deploy (Production, Preview, and/or
+   Development). Set it to the public backend URL with `/api` at the end, for
+   example `https://your-api-host.example.com/api`. Do not use `localhost` or
+   a private network address. Redeploy after changing this variable.
+3. In the backend hosting settings, set `DATABASE_URL` to the hosted PostgreSQL
+   connection string and set `FRONTEND_ORIGIN` to the exact Vercel site origin,
+   for example `https://your-project.vercel.app` (no trailing slash). For more
+   than one frontend origin, separate the exact origins with commas. The API
+   must allow the origin used by the browser, including Vercel preview origins
+   if you use previews.
+4. Start the backend with the host and port required by your hosting platform.
+   For platforms that provide a `PORT` environment variable, a typical command
+   from the `backend` directory is:
+
+   ```bash
+   uvicorn main:app --host 0.0.0.0 --port $PORT
+   ```
+
+5. Open the deployed API's `/` URL and confirm it returns the API running
+   message. Then open the Vercel site and test the dashboard and employee/task
+   requests.
+
+The frontend's local default (`http://localhost:8000/api`) is only used during
+Vite development. A deployed app without `VITE_API_URL` reports a clear
+configuration error at startup instead of silently calling the visitor's computer.
+
+---
+
+## 8. API Endpoints
 
 The backend provides REST APIs for employee and task management.
 
@@ -500,7 +538,7 @@ The employee ID must belong to an existing employee.
 
 ---
 
-## 8. Testing the APIs
+## 9. Testing the APIs
 
 FastAPI automatically generates interactive API documentation using Swagger UI.
 
@@ -522,7 +560,7 @@ You can also use Postman to test the REST APIs.
 
 ---
 
-## 9. Important Concepts Used
+## 10. Important Concepts Used
 
 | Concept | Explanation |
 |---|---|
@@ -541,7 +579,7 @@ You can also use Postman to test the REST APIs.
 
 ---
 
-## 10. Error Handling and Troubleshooting
+## 11. Error Handling and Troubleshooting
 
 ### Backend does not start
 
@@ -561,10 +599,22 @@ Check:
 
 ### Frontend cannot connect to backend
 
-Check:
-- FastAPI server is running.
-- API base URL in `frontend/src/api.js` is correct.
-- CORS configuration allows the frontend origin.
+For a deployed site, check:
+
+- The backend is deployed separately, running, and reachable at its public
+  HTTPS URL.
+- Vercel has `VITE_API_URL` set to the backend URL ending in `/api`, and the
+  frontend was redeployed after setting it.
+- The backend's `FRONTEND_ORIGIN` contains the exact site origin shown in the
+  browser address bar, with no path or trailing slash.
+- The backend's `DATABASE_URL` points to the hosted PostgreSQL database.
+- The browser developer tools' Network tab shows the request going to the
+  backend URL, not `localhost`. A CORS error usually means `FRONTEND_ORIGIN`
+  does not match the deployed site origin; a failed network request can mean
+  the backend URL is unreachable or the backend is not running.
+
+For local development, confirm FastAPI is running at `http://localhost:8000`
+and CORS allows `http://localhost:5173`.
 
 ### npm package errors
 
@@ -579,7 +629,7 @@ Run these commands from the frontend directory.
 
 ---
 
-## 11. Running the Complete Project
+## 12. Running the Complete Project
 
 You need two terminals.
 
@@ -602,7 +652,7 @@ Keep both terminals running while using the application.
 
 ---
 
-## 12. Future Enhancements
+## 13. Future Enhancements
 
 Possible improvements for future versions:
 
@@ -618,7 +668,7 @@ Possible improvements for future versions:
 
 ---
 
-## 13. Learning Outcomes
+## 14. Learning Outcomes
 
 By developing this project, I gained practical experience in:
 
@@ -634,7 +684,7 @@ By developing this project, I gained practical experience in:
 
 ---
 
-## 14. Author
+## 15. Author
 
 **Sriharini Chennu**
 
